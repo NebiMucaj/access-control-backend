@@ -8,6 +8,8 @@ CREATE TABLE member (
 
 CREATE TABLE log (
     logID int NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    timestamp date,
-    tagID VARCHAR(32) 
+    timestamp DATETIME,
+    tagID VARCHAR(32),
+    authorized TINYINT(1) 
+
 );

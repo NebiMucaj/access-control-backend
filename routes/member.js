@@ -10,21 +10,24 @@ router.get('/check/:id',(req,res)=>{
         if (err) res.status(500).json({'error':err});
        
         else { 
-            var logQuery="insert into log(timestamp,tagID) values("+'"'+dateFormat(new Date(), "yyyy-mm-dd h:MM:ss")+'"'+",'"+req.params.id +"');"            
+            var authorized=true;
+            if(result.length==0) authorized=false;
+            var logQuery="insert into log(timestamp,tagID,authorized) values("+'"'+dateFormat(new Date(), "yyyy-mm-dd h:MM:ss")+'"'+",'"+req.params.id+"',"+authorized +");"            
             con.connection.query(logQuery, function(err) {
-
+            
                 if (err) res.status(500).json({'error':err});
                
                 else {
+                    if (result.length==0) res.status(400).json({'access':false})
+            
+                    else res.status(200).json({'access':true});
                         
                    
                 }
                   });
         
         
-                  if (result.length==0) res.status(400).json({'access':false})
-            
-                  else res.status(200).json({'access':true});
+                 
 
 
            
@@ -71,6 +74,19 @@ con.connection.query(query, function(err, result) {
       });
 
     });
+ router.get('/logs/:timestamp',(req,res)=>{
+  var query ="select lastName,name,sex,birthday,timestamp from  log l  inner join  member m on (l.tagID=m.tagID) and  timestamp> '"+req.params.timestamp+"'  ORDER BY timestamp DESC";
+  
+  con.connection.query(query, function(err, result) {
+
+    if (err) res.status(500).json({'error':err});
+   
+    else { 
+       res.status(200).json({log:result})
+    }
+      });
+
+})   ;
 
 
 
